@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+        <html>
+        <head>
+        <title>Project Ion Chromatogram</title>
+<style>
+
+*::selection {
+    background:transparent;
+}
+
+/**::-moz-selection {
+    background:transparent;
+}
+
+*::-webkit-selection {
+    background:transparent;
+}*/
+
+    .targetoverlay {
+        fill: none;
+        pointer-events: all;
+    }
+
+    .target line {
+        stroke: black;
+        shape-rendering: crispEdges;
+    }
+
+    .targetcircle {
+        fill: #fff;
+        fill-opacity: .5;
+        stroke: black;
+        stroke-width: 1.5px;
+    }
+
+    body {
+        font-size: 10px;
+        font-family: sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .x.axis path {
+    }
+
+    .line {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 1.5px;
+    }
+
+    .brush .extent {
+        stroke: #fff;
+        fill-opacity: .125;
+        shape-rendering: crispEdges;
+    }
+</style>
+
+</head>
+
+<body style="width:1160px; margin-left: auto; margin-right: auto; margin-top: 20px;">
+<script>
+  var pic_report = ${pic_report} ;
+  var tstart = ${tstart} ;
+  var tstop = ${tstop} ;
+  var tmz = ${tmz} ;
+  var metsets = {
+    "TraceFinder": [
+      {name: "betaine", mz: "118.0863", rt: "9.06"},
+      {name: "arginine", mz: "175.1190", rt: "9.24"},
+      {name: "trimethylamine-N-oxide", mz: "76.0757", rt: "8.21"},
+      {name: "phenylalanine", mz: "166.0863", rt: "6.78"},
+      {name: "acetylcholine", mz: "146.1176", rt: "8.89"},
+      {name: "leucine", mz: "132.1019", rt: "7.10"},
+      {name: "valine", mz: "118.0863", rt: "7.57"},
+      {name: "ADMA", mz: "203.1503", rt: "9.78"},
+      {name: "tryptophan", mz: "205.0972", rt: "6.58"},
+      {name: "alanine", mz: "90.0550", rt: "7.92"}
+    ],
+    "Progenesis": [
+      {name: "P1842", mz: "118.0829", rt: "9.07"},
+      {name: "P5769", mz: "100.0746", rt: "13.56"},
+      {name: "P6211", mz: "415.2107", rt: "1.90"},
+      {name: "P105", mz: "130.1589", rt: "6.00"},
+      {name: "P2573", mz: "226.9510", rt: "7.39"}
+    ]    
+  }
+</script>
+
+<div id="ms1_holder" style="background-color: white;  position: absolute;display: none;  left: 200px;top: 50px; width:650px;height:550px">
+    <img style="position: absolute;top:-5px; right: -5px" src="../../../img/delete.png" onclick="d3.select('#ms1_holder').style('display','none') ;">
+    <img style="position: absolute;top:-5px; right: 30px" src="../../../img/screen.png" onclick="window.open('ms1_full_viewer.html')">
+</div>
+
+<div style="width: 1180px;font-size: 30px;" id="header">
+    <table style="vertical-align: middle; width: 1180px">
+        <tr>
+            <td style="width: 150px">
+                <img style="margin-right: 10px" src="../../../img/dice_icon_small.png">
+            </td>
+            <td>
+                <table style="width: 850px" id="report_table">
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</div>
+<hr style="width:940px;float:left;">
+<div style="width:200px;margin-top:10px; padding-top:10px;padding-bottom:10px;float:right" id="input_field">
+    &nbsp;&nbsp;&nbsp;&nbsp; metset:<select style="margin-bottom: 5px; margin-left:2px;width:123px;font-size: 10px;" id="metset" onchange="viewer.metset()">
+    <option value="TraceFinder">TraceFinder</option>
+    <option value="Progenesis">Progenesis</option>
+</select><br>
+    <select style="margin-bottom: 10px; margin-left:50px;width:122px;font-size: 10px;" size="3" id="metabolite" onchange="viewer.met()">
+        <option value="TF14">betaine</option>
+        <option value="TF11">arginine</option>
+        <option value="TF40">trimethylamine-N-oxide</option>
+        <option value="TF34">phenylalanine</option>
+        <option value="TF4">acetylcholine</option>
+        <option value="TF29">leucine</option>
+        <option value="TF43">valine</option>
+        <option value="TF6">ADMA</option>
+        <option value="TF37">SDMA</option>
+        <option value="TF28">isoleucine</option>
+        <option value="TF41">tryptophan</option>
+        <option value="TF7">alanine</option>
+    </select><br>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m/z:<input onkeyup="viewer.return_launch(event)" type="text" style="width:50px;font-size:10px" id="mz" value="${tmz}" />
+    <br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time:<input onkeyup="viewer.return_launch(event)" type="text" style="width:50px;font-size:10px" id="t" value="${(tstart+tstop)/2}" />
+    <br><br>
+
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button style="padding-top:3px;font-size: 10px;" value='Dice!' id='dice_launch_button' onclick="viewer.load_em_all()">
+        <img id="launch_image" style="" src="../../../img/dice_still.gif"><br>D.I.C.E!</button> <br>
+    <br>
+
+
+
+</div>
+<span id="totals">
+    Loading...
+</span>
+
+<script src="../../../js/d3.js"></script>
+<script src="../../../js/common_viewer.js"></script>
+<script>
+var fraction = function(filename){
+    return +filename.slice(-2) ;
+}
+fraction.label = "QC_Samples"
+var patient = function(filename){
+    return filename.slice(-2) ;
+    //return filename.slice(8,12) ;
+}
+patient.label = "Replicates"
+
+function labeler(filename){
+    //return patient(filename)+"_"+filename.slice(-4) ;
+    return filename ;
+}
+function color_by_source(){
+    var domain = d3.map() ;
+    function me(fname){
+        return domain[fname] ;
+    }
+
+    me.color_key = {
+        "Pooled Plasma": d3.rgb("purple"),
+        //"Polyps[N]": d3.rgb("blue"),
+        //"YES": d3.rgb("red"),
+        //"NO": d3.rgb("blue")
+    } ;
+
+    me.legend = [{"label": "Pooled Plasma", "color": d3.rgb("purple")}
+//                 ,
+//                 {"label": "Polyps[N]", "color": d3.rgb("blue")}
+                ] ;
+
+    me.sort_order = ["Polyps[Y]","Polyps[N]"] ;
+
+    me.label = function(value){
+        if(value.indexOf("PPP") > -1){
+            return "Pooled Plasma"
+        }
+        return undefined ;
+        // var detailed = clinical[patient(value)].history_of_colon_polyps ;
+        // if(detailed){
+        //     if(detailed.indexOf("YES") > -1){
+        //         return "Polyps[Y]" ;
+        //     }
+        //     if(detailed.indexOf("NO") > -1){
+        //         return "Polyps[N]" ;
+        //     }
+        // } else {
+        // return undefined ;
+        // }
+//        if(value.indexOf("A01C") > -1){
+//            return "A"
+//        }
+//        if(value.indexOf("A02E") > -1){
+//            return "B"
+//        }
+//        return undefined ;
+    }
+
+    me.label_color = function(value){
+        return me.color_key[value] ;
+    }
+
+    me.domain = function(value) {
+        if (!arguments.length) return domain;
+        var A = d3.rgb("purple") ;
+        //var B = d3.rgb("orange") ;
+        var k = 0.2 ;
+        // var alternate = 0 ;
+        // value.forEach(function(d){
+        //     if(alternate){
+        //         alternate=0;
+        //         domain[d] = d3.rgb(A) ;
+        //     } else {
+        //         alternate = 1 ;
+        //         domain[d] = d3.rgb(B)
+        //     }
+        // });
+        value.sort() ;
+        value.forEach(function(d){
+            A = A.brighter(k) ;
+            domain[d] = d3.rgb(A)
+        });
+//            if(d.indexOf("A02E") > -1){
+//                B = B.darker(k) ;
+//                domain[d] = d3.rgb(B)
+//            }
+//        })
+        //value.forEach(function(d){
+        //    domain[d] = me.color_key[clinical[patient(d)].history_of_colon_polyps] ;
+        //}) ;
+        return me;
+    };
+
+    return me ;
+}
+
+function file_filter(fname){
+    return true ;
+    //return clinical[patient(fname)].pathologic_stage && clinical[patient(fname)].anatomic_neoplasm_subdivision && clinical[patient(fname)].anatomic_neoplasm_subdivision === "Ascending Colon" ;
+}
+
+function tolerance_by_source(fname){
+    return 0.5 ;
+}
+
+var viewer = initialize(color_by_source,file_filter,tolerance_by_source,fraction,patient,labeler,metsets,["TraceFinder","Progenesis"]) ;
+viewer.load_em_all(tmz, pic_report,tstart,tstop) ;
+
+
+</script>
+
+</body>
+        </html>

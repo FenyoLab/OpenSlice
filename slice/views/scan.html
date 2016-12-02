@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<title>${title}</title>
+<link rel="icon" type="image/png" href="../../../../img/${ico}">
+<script src="../../../../js/browsertest.js"></script>
+<script src="../../../../js/canvastext.js"></script>
+<script src="../../../../js/mzgraph.js"></script>
+<script src="../../../../js/mzgraph-canvas.js"></script>
+</head>
+<body style="background-color: white; font-family: sans-serif;">
+<center>
+<table id="the_table">
+<tr>
+<td id="the_scan_title" align="center"></td>
+</tr>
+<tr>
+<td><div id="graphdiv" style="width:640px; height:480px;">
+</div></td>
+</tr>
+<tr>
+<td height="5">
+</td>
+</tr>
+<tr>
+<td  align="center">
+<input type="button" value="prev ms1" onClick="window.location='${prev_ms1_link}'">
+<input type="button" value="prev scan" onClick="window.location='${prev_scan_link}'">
+<input type="button" value="XIC" ${disabled} onClick="window.location='${ric_link}'">
+<input type="button" value="next scan" onClick="window.location='${next_scan_link}'">
+<input type="button" value="next ms1" onClick="window.location='${next_ms1_link}'">
+</td>
+</tr>
+<tr>
+<td height="5">
+</td>
+</tr>
+<tr>
+<td align="center">
+<div id="usagetip" style="font-family: arial, sans-serif; font-size:0.6em;">
+* upgrading to FF/Chrome/Safari/IE9 enables better graphics, zoom and XIC generation capabilities...
+</div>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+if(canvascheck){
+                g = new MZgraph(document.getElementById("graphdiv"), "${data}", {
+                labelsDivWidth: 125, labelsKMB: true,
+                labelsSeparateLines: true,
+                mz_zs: "${zs}",
+                clickCallback: function(e, x, pts) {
+                                    base = '${ric_last_slash}' ;
+                                    ctype = '${ctype}' ;
+                                    mz_start = x - 0.01 ;
+                                    mz_start = mz_start.toFixed(3) ;
+                                    mz_start = mz_start.toString() ;
+                                    mz_stop = x + 0.01 ;
+                                    mz_stop = mz_stop.toFixed(3) ;  
+                                    mz_stop = mz_stop.toString() ;
+                                    window.open(base +  mz_start + "-" + mz_stop + "." + ctype) ;
+                                } ,
+                altClickCallback: function(e, x, pts) {
+                                    console.log("was called!!!") ;
+                                    base = '${project_link}' ;
+                                    window.open(base + "xic/" + x.toFixed(4) + "/" + (${scan_time}).toFixed(2) );
+                                }
+                } 
+                );
+document.getElementById('usagetip').innerHTML="left-drag to zoom, left-click to generate an XIC" ;
+document.getElementById('the_scan_title').innerHTML = "${title}" ;
+}</script>
+</center>
+</body>
+</html>

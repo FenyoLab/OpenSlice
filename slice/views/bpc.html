@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BPC</title>
+<link rel="icon" type="image/png" href="../../img/ricico.png">
+<script src="../../js/dygraph-combined-test.js"></script>
+</head>
+<body style="background-color: white; font-family: sans-serif;">
+<center>
+
+<table id="the_table">
+<tr>
+<td align="center">Base Peak Chromatogram</td><div style="display:none;" id="labels" ></div></td>
+</tr>
+<tr>
+<td><div id="graphdiv" style="width:640px; height:440px;">
+
+
+</div></td>
+</tr>
+<tr>
+<td height="5">
+</td>
+</tr>
+<tr>
+<td align="center">
+<div id="usagetip" style="font-family: arial, sans-serif; font-size:0.6em;">
+* upgrading to a modern browser enables better graphics, zoom and scan click-through capabilities...
+
+</div>
+</td>
+</tr>
+</table>
+</center>
+<script type="text/javascript">
+
+g = new Dygraph(document.getElementById('graphdiv'),'${data}',{labelsDiv: document.getElementById("labels"),labelsKMB: true,
+                clickCallback: function(e, x, pts) {
+                    window.open('${rurl_link}'+ x + '.${ctype}') ;
+                },
+
+});
+document.getElementById('usagetip').innerHTML="left-drag to zoom, left-click to open individual scans" ;
+
+
+</script>
+</body>
+</html>

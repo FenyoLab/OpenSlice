@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" type="image/png" href="../../../../../../img/ms2ico.png">
+    <title>time: ${scan_time} mins</title>
+    <script type="text/javascript" src="../../../../../../js/jquery-1.7.min.js"></script>
+    <script type="text/javascript" src="../../../../../../js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="../../../../../../js/jquery.flot.js"></script>
+    <script type="text/javascript" src="../../../../../../js/jquery.flot.selection.js"></script>
+
+    <script type="text/javascript" src="../../../../../../js/specview.js"></script>
+    <script type="text/javascript" src="../../../../../../js/peptide.js"></script>
+    <script type="text/javascript" src="../../../../../../js/aminoacid.js"></script>
+    <script type="text/javascript" src="../../../../../../js/ion.js"></script>
+
+    <link REL="stylesheet" TYPE="text/css" HREF="../../../../../../css/lorikeet.css">
+
+
+</head>
+<body style="background-color: white; ; font-family: sans-serif;">
+<center>
+    <table border=0>
+        <tr>
+            <td>
+
+                <div id="lorikeet"></div>
+
+                <script type="text/javascript">
+                    scan_params = ${lorikeet_json};
+
+                    $(document).ready(function () {
+
+                        /* render the spectrum with the given options */
+                        $("#lorikeet").specview(
+                            scan_params
+                        );
+
+                    });
+
+                </script>
+            </td>
+        </tr>
+
+
+        <tr>
+            <td class="navbuttons" align="center">
+                <input type="button" value="prev ms1" onClick="window.location='${prev_ms1_link}'"/>
+                <input type="button" value="prev scan" onClick="window.location='${prev_scan_link}'"/>
+                <input type="button" value="XIC" ${disabled} onClick="window.location='${ric_link}'"/>
+                <input type="button" value="next scan" onClick="window.location='${next_scan_link}'"/>
+                <input type="button" value="next ms1" onClick="window.location='${next_ms1_link}'"/>
+                &nbsp;&nbsp;&nbsp;
+                <input id="denovo" type="text" value="${sequence}"
+                       onchange="window.location.href='${overlayurl}' + $('#denovo').val()"/>
+            </td>
+        </tr>
+    </table>
+</center>
+</body>
+</html>

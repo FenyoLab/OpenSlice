@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" type="image/png" href="../../../../../../img/mini_slice.png">
+    <title>time: ${scan_time} mins</title>
+</head>
+<body style="background-color: white; font-family: sans-serif;">
+<center>
+    <table border=0>
+        <tr>
+            <td>
+                <iframe style="background-color:#ffffff;width:630px;height:480px" scrolling="no"
+                        src="${pnglink}"></iframe>
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center">
+                <input type="button" value="prev ms1" onClick="window.location='${prev_ms1_link}'">
+                <input type="button" value="prev scan" onClick="window.location='${prev_scan_link}'">
+                <input type="button" value="XIC" ${disabled} onClick="window.location='${ric_link}'">
+                <input type="button" value="next scan" onClick="window.location='${next_scan_link}'">
+                <input type="button" value="next ms1" onClick="window.location='${next_ms1_link}'">
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+
+            </td>
+        </tr>
+    </table>
+</center>
+</body>
+</html>
