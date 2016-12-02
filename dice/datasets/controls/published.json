@@ -1,0 +1,44 @@
+{
+  "files": [
+    {
+      "label": "aLabel",
+      "tolerance": 0.01,
+      "a_covariate": "a_value",
+      "fname": "actual_filename_one",
+      "another_covariate": "another_value"
+    },
+    {
+      "label": "bLabel",
+      "tolerance": 0.01,
+      "a_covariate": "b_value",
+      "fname": "actual_filename_two",
+      "another_covariate": "yet_another_value"
+    }
+  ],
+  "variables": [
+    {
+      "values": [
+        "a_value",
+        "b_value",
+        "c_value"
+      ],
+      "name": "a_covariate"
+    },
+    {
+      "values": [
+        "another_value",
+        "yet_another_value",
+        "another_legal_value"
+      ],
+      "name": "another_covariate"
+    }
+  ],
+  "colors": {
+    "a_value": "green",
+    "b_value": "purple",
+    "c_value": "blue",
+    "another_Value": "red",
+    "yet_another_value": "orange",
+    "another_legal_value": "cyan"
+  }
+}

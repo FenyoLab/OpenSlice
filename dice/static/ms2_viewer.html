@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MS/MS Viewer</title>
+    <script type="text/javascript" src="js/jquery-1.7.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery.flot.js"></script>
+    <script type="text/javascript" src="js/jquery.flot.selection.js"></script>
+
+    <script type="text/javascript" src="js/specview.js"></script>
+    <script type="text/javascript" src="js/peptide.js"></script>
+    <script type="text/javascript" src="js/aminoacid.js"></script>
+    <script type="text/javascript" src="js/ion.js"></script>
+    <script type="text/javascript" src="js/d3.v3.min.js"></script>
+    <link REL="stylesheet" TYPE="text/css" HREF="css/lorikeet.css">
+</head>
+<body>
+<script>
+
+    //$(document).ready(function () {
+
+        scan_params = {"format": "minimal"} ;
+
+        scan_params["sequence"] = localStorage["sequence"] ;
+        scan_params["scanNum"] = localStorage["scanTime"] ;
+        scan_params["fileName"] = localStorage["fileName"] ;
+        scan_params["charge"] = localStorage["charge"] ;
+        scan_params["variableMods"] = JSON.parse(localStorage["variableMods"]) ;
+        scan_params["massError"] = +localStorage["massError"] ;
+
+
+
+        d3.text(localStorage["scanURL"],"text/csv",function(the_text){
+            var the_data = d3.csv.parseRows(the_text) ;
+            scan_params["precursorMz"] = +the_data[0][0] ;
+            var peaks = [] ;
+            var max_peak = 1 ;
+            for(var i = 1 ; i < the_data.length ; i++){
+                if( +the_data[i][1] > max_peak){
+                    max_peak = +the_data[i][1] ;
+                }
+                peaks.push( [ +the_data[i][0], +the_data[i][1] ] ) ;
+            }
+            scan_params["peaks"] = peaks ;
+            if(localStorage["nist_URL"]){
+                d3.text(localStorage["nist_URL"],"text/csv",function(nist_text){
+                    var nist_data = d3.csv.parseRows(nist_text) ;
+                    var nist_peaks = [] ;
+                    for(var i = 1 ; i < nist_data.length ; i++){
+                        nist_peaks.push( [ +nist_data[i][0], (-1.0*max_peak/1000.0) * +nist_data[i][1] ] ) ;
+                    }
+                    scan_params["extraPeakSeries"] = [{data: nist_peaks, color: "#00aa00",labelType: ''}] ;
+                    $("#lorikeet").specview(
+                        scan_params
+                    );
+                }) ;
+            } else {
+                $("#lorikeet").specview(
+                        scan_params
+                );
+            }
+
+        });
+
+</script>
+<center>
+    <table border=0>
+        <tr>
+            <td>
+                <div id="lorikeet"></div>
+            </td>
+        </tr>
+    </table>
+</center>
+</body>
+</html>

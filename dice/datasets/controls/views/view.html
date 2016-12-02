@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+    <title>Project Name</title>
+    <style>
+
+        .emergency {
+            -webkit-animation: cc 1s infinite alternate;
+            -moz-animation: cc 1s infinite alternate;
+            -ms-animation: cc 1s infinite alternate;
+            -o-animation: cc 1s infinite alternate;
+            animation: cc 1s infinite alternate;
+
+            color: #f00;
+            font-size: 32px;
+        }
+
+        @-webkit-keyframes cc {
+            from {
+                color: blue;
+            }
+            to {
+                color: green;
+            }
+        }
+
+        @-moz-keyframes cc {
+            from {
+                color: blue;
+            }
+            to {
+                color: green;
+            }
+        }
+
+        @-ms-keyframes cc {
+            from {
+                color: blue;
+            }
+            to {
+                color: green;
+            }
+        }
+
+        @-o-keyframes cc {
+            from {
+                color: blue;
+            }
+            to {
+                color: green;
+            }
+        }
+
+        @keyframes cc {
+            from {
+                color: blue;
+            }
+            to {
+                color: green;
+            }
+        }
+
+        h4 {
+            display: block;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        .targetoverlay {
+            fill: none;
+            pointer-events: all;
+        }
+
+        .target line {
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+
+        .targetcircle {
+            fill: #fff;
+            fill-opacity: .5;
+            stroke: black;
+            stroke-width: 1.5px;
+        }
+
+        body {
+            font-size: 10px;
+            font-family: sans-serif;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .x.axis path {
+        }
+
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .brush .extent {
+            stroke: #fff;
+            fill-opacity: .125;
+            shape-rendering: crispEdges;
+        }
+    </style>
+
+</head>
+
+<body style="width:1160px; margin-left: auto; margin-right: auto; margin-top: 10px;">
+
+<script>
+    var viewer = null;
+</script>
+<div id="animation" style="background-color: white; position: absolute;left: 0px;top: 0px; width:100%;height:100%">
+    <br>
+    <H1 id="waitmessage">&nbsp;&nbsp;&nbsp;==> Initializing D.I.C.E for the following <span id="filedomain"></span>
+        files:</H1>
+
+</div>
+
+<div id="ms2_iframe_holder"
+     style="background-color: white;  position: absolute;display: none;  left: 200px;top: 50px; width:650px;height:550px">
+    <img style="position: absolute;top:-5px; right: -5px" src="img/delete.png"
+         onclick="d3.select('#ms2_iframe_holder').style('display','none') ;">
+    <img style="position: absolute;top:-5px; right: 30px" src="img/screen.png"
+         onclick="window.open('ms2_full_viewer.html')">
+    <img id="nist_button" style="position: absolute;top:-5px; right: 65px" src="img/nist.png"
+         onclick="d3.select('#nist_iframe_holder').style('display','inline')">
+    <iframe onload="if(viewer){viewer.expose_ms2_frame();}" name="firstmsmsview" id="firstmsmsview" width="100%"
+            height="100%" style="border-style: hidden"></iframe>
+</div>
+
+<div id="nist_iframe_holder"
+     style="background-color: white;  position: absolute;display: none;  left: 200px;top: 50px; width:650px;height:550px">
+    <img style="position: absolute;top:-5px; right: -5px" src="img/delete.png"
+         onclick="d3.select('#nist_iframe_holder').style('display','none') ;">
+    <iframe name="nistview" id="nistview" width="100%" height="100%" style="border-style: hidden"></iframe>
+</div>
+
+<div id="ms1_holder"
+     style="background-color: white;  position: absolute;display: none;  left: 200px;top: 50px; width:650px;height:550px">
+    <img style="position: absolute;top:-5px; right: -5px" src="img/delete.png"
+         onclick="d3.select('#ms1_holder').style('display','none') ;">
+    <img style="position: absolute;top:-5px; right: 30px" src="img/screen.png"
+         onclick="window.open('ms1_full_viewer.html')">
+</div>
+
+<div style="width: 1180px;font-size: 16px;" id="header">
+    <table style="vertical-align: middle; width: 1180px">
+        <tr>
+            <td align="center" colspan="2"><h4>Rapid vs Slow Alzheimer Plaques</h4></td>
+        </tr>
+        <tr>
+            <td onclick='viewer.clear_multifilter()' style="width: 150px">
+                <img id="diceintitle" style="margin-right: 10px" src="img/dice_icon_small.png">
+            </td>
+            <td>
+                <table style="width: 850px" id="report_table">
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</div>
+<hr style="width:940px;float:left;">
+<div style="width:200px;margin-top:10px; padding-top:10px;padding-bottom:10px;float:right" id="input_field">
+    proteinset:<select style="margin-bottom: 5px; margin-left:2px;width:123px;font-size: 10px;" id="proteinset"
+                       onchange="viewer.pset2prots()">
+    <option value="HouseKeeping" selected="1">HouseKeeping</option>
+    <option value="ColonCancer">Colon Cancer</option>
+</select><br>
+    <select style="margin-bottom: 10px; margin-left:50px;width:122px;font-size: 10px;" size="3" id="proteinset_details"
+            onchange="viewer.protentry2prot()">
+        <option value="P68133" selected="1">P68133 ACTA1</option>
+        <option value="P04406">P04406 GAPDH</option>
+        <option value="P07900">P07900 HSP90AA1</option>
+    </select><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;protein:<input style="width:122px;margin-bottom:5px;font-size: 10px;" type="text"
+                                           onkeyup="viewer.prot2peps(event)" id="protein" value="P68133"/><br>
+    <select style="margin-bottom: 10px; margin-left:50px;width:122px;font-size: 10px;" id="proteotypic"
+            onchange="viewer.proteo2peps()" size="3">
+        <option value="SYELPDGQVITIGNER" selected="1">0.95 SYELPDGQVITIGNER</option>
+        <option value="VAPEEHPTLLTEAPLNPK">0.94 VAPEEHPTLLTEAPLNPK</option>
+        <option value="YPIEHGIITNWDDMEK">0.93 YPIEHGIITNWDDMEK</option>
+        <option value="GYSFVTTAER">0.92 GYSFVTTAER</option>
+        <option value="QEYDEAGPSIVHR">0.91 QEYDEAGPSIVHR</option>
+        <option value="DLYANNVMSGGTTMYPGIADR">0.91 DLYANNVMSGGTTMYPGIADR</option>
+        <option value="HQGVMVGMGQK">0.88 HQGVMVGMGQK</option>
+        <option value="EITALAPSTMK">0.84 EITALAPSTMK</option>
+        <option value="AVFPSIVGRPR">0.81 AVFPSIVGRPR</option>
+        <option value="TTGIVLDSGDGVTHNVPIYEGYALPHAIMR">0.80 TTGIVLDSGDGVTHNVPIYEGYALPHAIMR</option>
+        <option value="AGFAGDDAPR">0.30 AGFAGDDAPR</option>
+        <option value="DSYVGDEAQSK">0.18 DSYVGDEAQSK</option>
+        <option value="IWHHTFYNELR">0.16 IWHHTFYNELR</option>
+        <option value="MCDEDETTALVCDNGSGLVK">0.10 MCDEDETTALVCDNGSGLVK</option>
+        <option value="LCYVALDFENEMATAASSSSLEK">0.09 LCYVALDFENEMATAASSSSLEK</option>
+        <option value="DLTDYLMK">0.07 DLTDYLMK</option>
+        <option value="CPETLFQPSFIGMESAGIHETTYNSIMK">0.06 CPETLFQPSFIGMESAGIHETTYNSIMK</option>
+        <option value="GILTLK">0.06 GILTLK</option>
+        <option value="YSVWIGGSILASLSTFQQMWITK">0.06 YSVWIGGSILASLSTFQQMWITK</option>
+        <option value="LDLAGR">0.05 LDLAGR</option>
+        <option value="MTQIMFETFNVPAMYVAIQAVLSLYASGR">0.04 MTQIMFETFNVPAMYVAIQAVLSLYASGR</option>
+        <option value="CDIDIR">0.04 CDIDIR</option>
+        <option value="IIAPPER">0.02 IIAPPER</option>
+    </select><br>
+
+    &nbsp;&nbsp;&nbsp;peptide:<input style="margin-bottom: 20px; width:122px;font-size: 10px;" type="text"
+                                     onkeyup="viewer.pep2mass(event)" id="peptide" value="SYELPDGQVITIGNER"/><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m/z:<input
+        onkeyup="viewer.return_launch(event)" type="text" style="width:50px;font-size:10px" id="mz" value="924.962"/>
+    &nbsp;&nbsp;z:<input onkeyup="viewer.pep2mass(event)" type="text" id="spinner" value="2"
+                         style='width:10px;font-size:10px'/><br><br>
+
+
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button style="padding-top:3px;font-size: 10px;font-weight:bold;background-color:white" value='Dice!'
+            id='dice_launch_button' onclick="viewer.load_em_all()">
+        <img id="launch_image" style="" src="img/dice_still.gif"><br>D.I.C.E!
+    </button>
+    <br>
+    <br>
+    <center>
+
+        <table>
+            <tr>
+                <td style="text-align: right">
+                    score all ms2 scans:
+                </td>
+                <td>
+                    <input name="ms2scoring" id="allscore" value="all" type="radio">
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right">
+                    score visible scans:
+                </td>
+                <td>
+                    <input name="ms2scoring" id="visiblescore" value="visible" type="radio">
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right">
+                    disable ms2 scoring:
+                </td>
+                <td>
+                    <input name="ms2scoring" id="offscore" value="off" type="radio" checked="checked">
+                </td>
+            </tr>
+        </table>
+    </center>
+
+
+</div>
+<span id="totals">
+    Loading...
+</span>
+
+<script src="js/d3.v3.min.js"></script>
+<script src="js/aminoacid.js"></script>
+<script src="js/ion.js"></script>
+<script src="js/peptide.js"></script>
+<script src="js/js3d.js"></script>
+<script src="js/multivariate_viewer.js"></script>
+<script>
+
+    viewer = initialize(tolerance_by_source);
+    viewer.load_em_all(895.94960);
+
+</script>
+
+</body>
+</html>

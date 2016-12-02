@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MS/MS Viewer</title>
+    <script type="text/javascript" src="js/jquery-1.7.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery.flot.js"></script>
+    <script type="text/javascript" src="js/jquery.flot.selection.js"></script>
+
+    <script type="text/javascript" src="js/specview.js"></script>
+    <script type="text/javascript" src="js/peptide.js"></script>
+    <script type="text/javascript" src="js/aminoacid.js"></script>
+    <script type="text/javascript" src="js/ion.js"></script>
+    <script type="text/javascript" src="js/d3.v3.min.js"></script>
+    <link REL="stylesheet" TYPE="text/css" HREF="css/lorikeet.css">
+</head>
+<body>
+<script>
+
+    scan_params = {"format": "full"} ;
+
+    scan_params["sequence"] = localStorage["sequence"] ;
+    scan_params["scanNum"] = localStorage["scanTime"] ;
+    scan_params["fileName"] = localStorage["fileName"] ;
+    scan_params["charge"] = localStorage["charge"] ;
+    scan_params["variableMods"] = JSON.parse(localStorage["variableMods"]) ;
+    scan_params["massError"] = +localStorage["massError"] ;
+    $(document).ready(function () {
+
+        d3.text(localStorage["scanURL"],"text/csv",function(the_text){
+            var the_data = d3.csv.parseRows(the_text) ;
+            scan_params["precursorMz"] = +the_data[0][0] ;
+            var peaks = [] ;
+            for(var i = 1 ; i < the_data.length ; i++){
+                peaks.push( [ +the_data[i][0], +the_data[i][1] ] ) ;
+            }
+            scan_params["peaks"] = peaks ;
+            $("#lorikeet").specview(
+                    scan_params
+            );
+
+        });
+    });
+
+</script>
+<center>
+    <table border=0>
+        <tr>
+            <td>
+                <div id="lorikeet"></div>
+            </td>
+        </tr>
+    </table>
+</center>
+</body>
+</html>
